@@ -1,0 +1,137 @@
+public class RROP_SplayTree
+{
+    static class Node {
+        int key;
+        Node left, right;
+
+        Node(int key) {
+            this.key = key;
+            left = right = null;
+        }
+    }
+
+    // Splay Tree Class
+    static class SplayTree {
+        Node root;
+
+        // Right rotation
+        Node rightRotate(Node x) {
+            Node y = x.left;
+            x.left = y.right;
+            y.right = x;
+            return y;
+        }
+
+        // Left rotation
+        Node leftRotate(Node x) {
+            Node y = x.right;
+            x.right = y.left;
+            y.left = x;
+            return y;
+        }
+
+        // Splay operation: bring key to root
+        Node splay(Node root, int key) {
+            if (root == null || root.key == key)
+                return root;
+
+            // Key lies in left subtree
+            if (key < root.key) {
+                if (root.left == null) return root;
+
+                // Zig-Zig (Left Left)
+                if (key < root.left.key) {
+                    root.left.left = splay(root.left.left, key);
+                    root = rightRotate(root);
+                }
+                // Zig-Zag (Left Right)
+                else if (key > root.left.key) {
+                    root.left.right = splay(root.left.right, key);
+                    if (root.left.right != null)
+                        root.left = leftRotate(root.left);
+                }
+
+                return (root.left == null) ? root : rightRotate(root);
+            }
+
+            // Key lies in right subtree
+            else {
+                if (root.right == null) return root;
+
+                // Zag-Zig (Right Left)
+                if (key < root.right.key) {
+                    root.right.left = splay(root.right.left, key);
+                    if (root.right.left != null)
+                        root.right = rightRotate(root.right);
+                }
+                // Zag-Zag (Right Right)
+                else if (key > root.right.key) {
+                    root.right.right = splay(root.right.right, key);
+                    root = leftRotate(root);
+                }
+
+                return (root.right == null) ? root : leftRotate(root);
+            }
+        }
+
+        // Insert key
+        Node insert(Node root, int key) {
+            if (root == null) return new Node(key);
+
+            root = splay(root, key);
+
+            if (root.key == key)
+                return root; // already exists
+
+            Node newNode = new Node(key);
+            if (key < root.key) {
+                newNode.right = root;
+                newNode.left = root.left;
+                root.left = null;
+            } else {
+                newNode.left = root;
+                newNode.right = root.right;
+                root.right = null;
+            }
+            return newNode;
+        }
+
+        // Search key and splay it
+        Node search(Node root, int key) {
+            return splay(root, key);
+        }
+
+        // In-order traversal
+        void inOrder(Node root) {
+            if (root != null) {
+                inOrder(root.left);
+                System.out.print(root.key + " ");
+                inOrder(root.right);
+            }
+        }
+    }
+
+    // Main Program Execution
+    public static void main(String[] args) {
+        SplayTree tree = new SplayTree();
+        Node root = null;
+
+        System.out.println("Inserting inventory item IDs: 50, 30, 70, 20, 60");
+        int[] items = {50, 30, 70, 20, 60};
+        for (int item : items) {
+            root = tree.insert(root, item);
+        }
+
+        System.out.print("Splay Tree Inorder (sorted items): ");
+        tree.inOrder(root);
+        System.out.println();
+
+        System.out.println("\nSearching for item 60 in inventory...");
+        root = tree.search(root, 60);
+        System.out.println("Item 60 found and moved closer to root.");
+
+        System.out.print("Splay Tree Inorder after search: ");
+        tree.inOrder(root);
+        System.out.println();
+    }
+}
