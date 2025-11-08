@@ -8,6 +8,7 @@ public class SplayTree {
 
     private Node root;
 
+    
     Node rightRotate(Node x) {
         Node y = x.left;
         x.left = y.right;
@@ -28,16 +29,15 @@ public class SplayTree {
         if (root == null || root.key == key)
             return root;
 
-        
+       
         if (key < root.key) {
             if (root.left == null) return root;
 
-            
             if (key < root.left.key) {
                 root.left.left = splay(root.left.left, key);
                 root = rightRotate(root);
             }
-           
+            
             else if (key > root.left.key) {
                 root.left.right = splay(root.left.right, key);
                 if (root.left.right != null)
@@ -47,14 +47,17 @@ public class SplayTree {
             return (root.left == null) ? root : rightRotate(root);
         }
 
+        
         else {
             if (root.right == null) return root;
 
+            
             if (key < root.right.key) {
                 root.right.left = splay(root.right.left, key);
                 if (root.right.left != null)
                     root.right = rightRotate(root.right);
             }
+          
             else if (key > root.right.key) {
                 root.right.right = splay(root.right.right, key);
                 root = leftRotate(root);
@@ -64,13 +67,24 @@ public class SplayTree {
         }
     }
 
+ 
     public void insert(int key) {
+        System.out.println("\nInserting " + key + "...");
+        System.out.print("Before Insert (Tree): ");
+        display();
+
         if (root == null) {
             root = new Node(key);
+            System.out.print("After Insert (Tree): ");
+            display();
             return;
         }
         root = splay(root, key);
-        if (root.key == key) return;
+
+        if (root.key == key) {
+            System.out.println("Key already exists!");
+            return;
+        }
 
         Node newNode = new Node(key);
         if (key < root.key) {
@@ -83,21 +97,49 @@ public class SplayTree {
             root.right = null;
         }
         root = newNode;
+
+        System.out.print("After Insert (Tree): ");
+        display();
     }
 
+   
     public boolean search(int key) {
+        System.out.println("\nSearching for " + key + "...");
+        System.out.print("Before Search (Tree): ");
+        display();
+
         root = splay(root, key);
+
+        System.out.print("After Splay (Tree): ");
+        display();
+
         return root != null && root.key == key;
     }
 
     
+    public void display() {
+        System.out.print("[ ");
+        inorder(root);
+        System.out.println("]");
+    }
+
+    private void inorder(Node node) {
+        if (node != null) {
+            inorder(node.left);
+            System.out.print(node.key + " ");
+            inorder(node.right);
+        }
+    }
+
     public static void main(String[] args) {
         SplayTree tree = new SplayTree();
+
+       
         tree.insert(20);
         tree.insert(10);
         tree.insert(30);
 
+     
         System.out.println("Splay Tree Search (10 found): " + tree.search(10));
     }
 }
-
