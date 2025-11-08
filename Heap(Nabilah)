@@ -1,0 +1,106 @@
+public class RROP_MinHeap
+{
+    static class MinHeap {
+        int[] heap;     // Array to store route distances
+        int size;       // Current number of routes
+        int capacity;   // Maximum capacity of the heap
+
+        // Constructor
+        MinHeap(int capacity) {
+            heap = new int[capacity];
+            size = 0;
+            this.capacity = capacity;
+        }
+
+        // Insert a new route distance (smaller = higher priority)
+        void insert(int distance) {
+            if (size == capacity) {
+                System.out.println("Heap is full! Cannot insert new route.");
+                return;
+            }
+
+            heap[size] = distance;
+            int i = size;
+            size++;
+
+            // Maintain Min-Heap order (smallest at top)
+            while (i > 0 && heap[i] < heap[(i - 1) / 2]) {
+                int temp = heap[i];
+                heap[i] = heap[(i - 1) / 2];
+                heap[(i - 1) / 2] = temp;
+                i = (i - 1) / 2;
+            }
+        }
+
+        // Remove and return the shortest route distance
+        int extractMin() {
+            if (size == 0) {
+                System.out.println("No routes available!");
+                return -1;
+            }
+
+            int min = heap[0];
+            heap[0] = heap[size - 1];
+            size--;
+            heapify(0);
+            return min;
+        }
+
+        // Maintain Min-Heap order after extraction
+        void heapify(int i) {
+            int left = 2 * i + 1;
+            int right = 2 * i + 2;
+            int smallest = i;
+
+            if (left < size && heap[left] < heap[smallest])
+                smallest = left;
+            if (right < size && heap[right] < heap[smallest])
+                smallest = right;
+
+            if (smallest != i) {
+                int temp = heap[i];
+                heap[i] = heap[smallest];
+                heap[smallest] = temp;
+                heapify(smallest);
+            }
+        }
+
+        // Display all current routes in heap
+        void display() {
+            System.out.print("Current Routes (Heap): ");
+            for (int i = 0; i < size; i++) {
+                System.out.print(heap[i] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    // =======================
+    // MAIN PROGRAM EXECUTION
+    // =======================
+    public static void main(String[] args) {
+
+        // Create a Min-Heap for route distances
+        MinHeap routeHeap = new MinHeap(10);
+
+        // Insert route distances (in nautical miles)
+        // Based on RROP Distance Matrix: A–B=15, A–C=25, A–D=35
+        System.out.println("\nInserting route distances (nm): 15, 25, 35, 20");
+        routeHeap.insert(15);  // Route A–B
+        routeHeap.insert(25);  // Route A–C
+        routeHeap.insert(35);  // Route A–D
+        routeHeap.insert(20);  // Example additional route
+
+        // Display heap after insertions
+        routeHeap.display();
+
+        // Remove (deliver) the shortest route
+        int shortest = routeHeap.extractMin();
+        System.out.println("\nShortest route delivered: " + shortest + " nm");
+
+        // Display heap after removal
+        routeHeap.display();
+
+        System.out.println("\nAll route priorities managed successfully.");
+    }
+}
