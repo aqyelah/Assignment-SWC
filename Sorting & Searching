@@ -1,0 +1,47 @@
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class InsertionSortBinarySearch {
+
+    public static String insertionSort(int[] arr) {
+        for (int i = 1; i < arr.length; i++) {
+            int key = arr[i];
+            int j = i - 1;
+            while (j >= 0 && arr[j] > key) {
+                arr[j + 1] = arr[j];
+                j--;
+            }
+            arr[j + 1] = key;
+        }
+        return Arrays.toString(arr);
+    }
+
+    public static String binarySearch(int[] arr, int target) {
+        int first = 0, last = arr.length - 1, middle;
+        while (first <= last) {
+            middle = (first + last) / 2;
+            if (arr[middle] == target)
+                return "Value " + target + " found at index " + middle + ".";
+            else if (arr[middle] < target)
+                first = middle + 1;
+            else
+                last = middle - 1;
+        }
+        return "Value " + target + " not found in the list.";
+    }
+
+    public static void main(String[] args) {
+        int[] arr = {35, 25, 15, 30, 20};
+
+        System.out.println("Original Array: " + Arrays.toString(arr));
+        System.out.println("\nAfter Insertion Sort:");
+        System.out.println(insertionSort(arr));
+
+        Scanner sc = new Scanner(System.in);
+        System.out.print("\nEnter value to search: ");
+        int target = sc.nextInt();
+
+        System.out.println(binarySearch(arr, target));
+        sc.close();
+    }
+}
